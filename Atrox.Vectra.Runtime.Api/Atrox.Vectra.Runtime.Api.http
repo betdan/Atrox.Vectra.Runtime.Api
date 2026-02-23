@@ -1,0 +1,10 @@
+@Atrox.Vectra.Runtime.Api_HostAddress = http://localhost:5255
+
+GET {{Atrox.Vectra.Runtime.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+
+
+

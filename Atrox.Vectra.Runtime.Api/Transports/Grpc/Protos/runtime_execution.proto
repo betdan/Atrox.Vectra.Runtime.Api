@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+option csharp_namespace = "Atrox.Vectra.Runtime.Api.Transports.Grpc";
+
+package runtimeexecution;
+
+service RuntimeExecution {
+  rpc Execute (ExecuteRequest) returns (ExecuteResponse);
+}
+
+message InputParameter {
+  string name = 1;
+  string value = 2;
+}
+
+message ExecuteRequest {
+  string procedureName = 1;
+  string databaseName = 2;
+  repeated InputParameter inputParameters = 3;
+}
+
+message OutputParameter {
+  string key = 1;
+  string value = 2;
+  string type = 3;
+}
+
+message Cell {
+  string key = 1;
+  string value = 2;
+}
+
+message Row {
+  repeated Cell cells = 1;
+}
+
+message ResultSet {
+  repeated Row rows = 1;
+}
+
+message ExecuteResponse {
+  bool success = 1;
+  repeated OutputParameter outputParameters = 2;
+  repeated ResultSet resultSets = 3;
+  repeated string prints = 4;
+  string error = 5;
+}
