@@ -33,7 +33,7 @@ namespace Atrox.Vectra.Runtime.Api.Transports.WebSocket
             }
 
             using var socket = await context.WebSockets.AcceptWebSocketAsync();
-            _logger.LogInformation("WebSocket client connected from {remoteIp}.", context.Connection.RemoteIpAddress);
+            _logger.LogInformation("WebSocket runtime client connected from {remoteIp}.", context.Connection.RemoteIpAddress);
             await HandleConnectionAsync(socket, context.RequestAborted);
         }
 
@@ -61,7 +61,9 @@ namespace Atrox.Vectra.Runtime.Api.Transports.WebSocket
                 while (!receiveResult.EndOfMessage);
 
                 var requestPayload = messageBuilder.ToString();
+                _logger.LogDebug("WebSocket runtime request: {request}", requestPayload);
                 var responsePayload = await ProcessMessageAsync(requestPayload);
+                _logger.LogDebug("WebSocket runtime response: {response}", responsePayload);
 
                 var responseBytes = Encoding.UTF8.GetBytes(responsePayload);
                 await socket.SendAsync(new ArraySegment<byte>(responseBytes), WebSocketMessageType.Text, true, cancellationToken);
@@ -101,11 +103,12 @@ namespace Atrox.Vectra.Runtime.Api.Transports.WebSocket
                 using var scope = _scopeFactory.CreateScope();
                 var executionService = scope.ServiceProvider.GetRequiredService<IExecutionService>();
                 var executionResponse = await executionService.ExecuteServiceAsync(executionRequest);
+                _logger.LogDebug("WebSocket runtime execution response object: {response}", Newtonsoft.Json.JsonConvert.SerializeObject(executionResponse, Newtonsoft.Json.Formatting.Indented));
                 return JsonSerializer.Serialize(executionResponse);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "WebSocket message processing failed.");
+                _logger.LogError(ex, "WebSocket runtime message processing failed.");
 
                 var errorResponse = new ServiceResult
                 {

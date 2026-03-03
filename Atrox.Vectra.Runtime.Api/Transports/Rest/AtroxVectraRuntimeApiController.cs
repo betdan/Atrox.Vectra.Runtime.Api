@@ -21,13 +21,13 @@ namespace Atrox.Vectra.Runtime.Api.Transports.Rest
         public async Task<IActionResult> DefaultRoute(ServiceRequest<ApplicationDto> req)
         {
             var applicationDto = req.Body;
-            _logger.LogInformation("Request received.");
-            _logger.LogDebug("Request payload: {requestPayload}", JsonSerializer.Serialize(applicationDto, new JsonSerializerOptions { WriteIndented = true }));
+            _logger.LogInformation("REST runtime request received.");
+            _logger.LogDebug("REST runtime request: {request}", JsonSerializer.Serialize(applicationDto, new JsonSerializerOptions { WriteIndented = true }));
 
             var response = await _executionService.ExecuteServiceAsync(applicationDto);
 
-            _logger.LogInformation("Request processed successfully.");
-            _logger.LogDebug("Response payload: {responsePayload}", JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true }));
+            _logger.LogInformation("REST runtime request processed successfully.");
+            _logger.LogDebug("REST runtime response: {response}", JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true }));
 
             return Ok(response);
         }
@@ -36,13 +36,13 @@ namespace Atrox.Vectra.Runtime.Api.Transports.Rest
         public async Task<IActionResult> HandleExtraValue(ServiceRequest<ApplicationDto> req, string extraValue)
         {
             var applicationDto = req.Body;
-            _logger.LogInformation("Request received with route parameter: {extraValue}", extraValue);
-            _logger.LogDebug("Request payload: {requestPayload}", JsonSerializer.Serialize(applicationDto, new JsonSerializerOptions { WriteIndented = true }));
+            _logger.LogInformation("REST runtime request received with route parameter: {extraValue}", extraValue);
+            _logger.LogDebug("REST runtime request: {request}", JsonSerializer.Serialize(applicationDto, new JsonSerializerOptions { WriteIndented = true }));
 
             var response = await _executionService.ExecuteServiceAsync(applicationDto);
 
-            _logger.LogInformation("Request with route parameter processed successfully.");
-            _logger.LogDebug("Response payload: {responsePayload}", JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true }));
+            _logger.LogInformation("REST runtime request with route parameter processed successfully.");
+            _logger.LogDebug("REST runtime response: {response}", JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true }));
 
             return Ok(response);
         }

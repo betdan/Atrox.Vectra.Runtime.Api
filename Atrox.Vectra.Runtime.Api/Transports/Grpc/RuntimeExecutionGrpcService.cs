@@ -3,6 +3,7 @@ namespace Atrox.Vectra.Runtime.Api.Transports.Grpc
     using global::Grpc.Core;
     using Atrox.Vectra.Runtime.Api.Application.Contracts.Services;
     using Atrox.Vectra.Runtime.Api.Business.Models.RequestResponse.Request;
+    using Newtonsoft.Json;
     using System.Globalization;
 
     public class RuntimeExecutionGrpcService(IExecutionService executionService, ILogger<RuntimeExecutionGrpcService> logger) : RuntimeExecution.RuntimeExecutionBase
@@ -12,6 +13,7 @@ namespace Atrox.Vectra.Runtime.Api.Transports.Grpc
 
         public override async Task<ExecuteResponse> Execute(ExecuteRequest request, ServerCallContext context)
         {
+            _logger.LogDebug("gRPC runtime request: {request}", JsonConvert.SerializeObject(request, Formatting.Indented));
             var internalRequest = new ApplicationDto
             {
                 Data = new AtroxVectraRuntimeApiRequest
@@ -28,7 +30,7 @@ namespace Atrox.Vectra.Runtime.Api.Transports.Grpc
                 }
             };
 
-            _logger.LogInformation("gRPC request received for procedure: {procedureName}", request.ProcedureName);
+            _logger.LogInformation("gRPC runtime request received for procedure: {procedureName}", request.ProcedureName);
             var executionResult = await _executionService.ExecuteServiceAsync(internalRequest);
 
             var response = new ExecuteResponse
@@ -80,6 +82,7 @@ namespace Atrox.Vectra.Runtime.Api.Transports.Grpc
                 }
             }
 
+            _logger.LogDebug("gRPC runtime response: {response}", JsonConvert.SerializeObject(response, Formatting.Indented));
             return response;
         }
     }

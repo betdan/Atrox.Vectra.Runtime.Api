@@ -15,9 +15,23 @@ namespace CrossCutting.Middlewares
         };
 
         private readonly RequestDelegate _next = next ?? throw new ArgumentNullException(nameof(next));
+        private static readonly string[] ExcludedPathPrefixes =
+        {
+            "/health",
+            "/metrics",
+            "/swagger",
+            "/.well-known"
+        };
 
         public async Task Invoke(HttpContext context)
         {
+            var path = context.Request.Path.Value ?? string.Empty;
+            if (ExcludedPathPrefixes.Any(prefix => path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)))
+            {
+                await _next(context);
+                return;
+            }
+
             var missingHeaders = RequiredHeaders
                 .Where(header => !context.Request.Headers.TryGetValue(header, out var value) || string.IsNullOrWhiteSpace(value.ToString()))
                 .ToList();

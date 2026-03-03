@@ -16,11 +16,11 @@ namespace Atrox.Vectra.Runtime.Api.Transports.Amqp
         {
             ServiceResult response = new ServiceResult();
             var request = context.Message.Req;
-            _logger.LogDebug("Consumer request: {request}", JsonConvert.SerializeObject(request, Formatting.Indented));
+            _logger.LogDebug("AMQP runtime request: {request}", JsonConvert.SerializeObject(request, Formatting.Indented));
 
             response = await _executionService.ExecuteServiceAsync(request);
 
-            _logger.LogDebug("Consumer response: {response}", JsonConvert.SerializeObject(response, Formatting.Indented));
+            _logger.LogDebug("AMQP runtime response: {response}", JsonConvert.SerializeObject(response, Formatting.Indented));
 
             var resultEvent = new MtResultEvent(context.Message.CorrelationId, DateTime.Now, response);
             await context.RespondAsync<MtResultEvent>(resultEvent);
